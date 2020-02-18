@@ -12,7 +12,6 @@ locPath = "/Users/lxy/Desktop/Rice/PHYS 491 & 493 Research/data"
 
 for yr in years:
     for mo in months:
-        print(mo)
         for da in days:
             thisFile = "AIA"+ yr + mo + da + "_0000_0193.fits"
             thisPath = "/".join([yr,mo,da,"H0000"])
@@ -20,11 +19,12 @@ for yr in years:
 
             myUrl = "/".join([urlBase,thisPath,thisFile])
             myDest = "/".join([locPath, thisFile])
-            # print(myDest)
+
             print(myUrl)
             myBits = requests.get(myUrl)
 
-            if len(myBits.content) > 500: # if files don't exist we get a short reply from the server: skip these
+            # if files don't exist we get a short reply from the server: skip these
+            if len(myBits.content) > 500:
                 myFile = open(myDest, "wb")
                 myFile.write(myBits.content)
                 myFile.close()
