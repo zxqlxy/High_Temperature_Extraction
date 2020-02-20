@@ -20,7 +20,7 @@ converge because it will pick noise around the sun like [this](pics/plot_000900.
 
 Indeed, after I found the maximum points on both 94 and 193. I found that the maximum point of 94 is actually out side of
 the sun. While the 193 looks good. Here are the pictures.
-
-<img src="pics/max_point_094.jpg" alt="094" width="420" style="float: right;"/>
-<img src="pics/max_point_193.jpg" alt="193" width="420" style="float: right;"/>
-
+<p>
+  <img src="pics/max_point_094.jpg" alt="094" width="420" style="float: right;"/>
+  <img src="pics/max_point_193.jpg" alt="193" width="420" style="float: right;"/>
+</p>
