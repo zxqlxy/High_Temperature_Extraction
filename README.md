@@ -12,6 +12,7 @@ The result of a Fe_XVIII signal full disk [solar picture](pics/20190309_Fe_XVIII
 <img src="pics/20190309_0000_0171.jpg" alt="171 image" width="450" align="middle"/>
 <img src="pics/20190309_0000_0193.jpg" alt="193 image" width="450" align="middle"/>
 </p>
+
 ### Week 2
 After some preprocessing, I did the first GAN on data on first 3 months of data and I found that the loss function never
 converge because it will pick noise around the sun like [this](pics/plot_000900.png). 
