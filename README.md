@@ -9,8 +9,8 @@ The result of a Fe_XVIII signal full disk [solar picture](pics/20190309_Fe_XVIII
 <p>
   <img src="pics/20190309_Fe_XVIII.jpg" alt="solar picture" width="420" style="float: right;"/>
   <img src="pics/20190309_0000_0094.jpg" alt="94 image" width="420" style="float: right;"/>
-  <img src="pics/20190309_0000_0171.jpg" alt="171 image" width="420" align="left"/>
-  <img src="pics/20190309_0000_0193.jpg" alt="193 image" width="420" align="right"/>
+  <img src="pics/20190309_0000_0171.jpg" alt="171 image" width="420" style="float: right;"/>
+  <img src="pics/20190309_0000_0193.jpg" alt="193 image" width="420" style="float: right;"/>
  </p>
 
 
