@@ -17,4 +17,4 @@ After some preprocessing, I did the first GAN on data on first 3 months of data 
 converge because it will pick noise around the sun like [this](pics/plot_000900.png). 
 
 Indeed, after I found the maximum points on both 94 and 193. I found that the maximum point of 94 is actually out side of
-the sun. While the 193 looks good. Here are the pictures of ![094](pics/max_point_094.jpg =250x250) and ![193](pics/max_point_193.jpg).
+the sun. While the 193 looks good. Here are the pictures of ![094](pics/max_point_094.jpg|width=48) and ![193](pics/max_point_193.jpg).
