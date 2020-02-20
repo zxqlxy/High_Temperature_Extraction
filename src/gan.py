@@ -1,4 +1,5 @@
 # example of pix2pix gan for satellite to map image-to-image translation
+import numpy as np
 from numpy import load
 from numpy import zeros
 from numpy import ones
@@ -91,7 +92,7 @@ def decoder_block(layer_in, skip_in, n_filters, dropout=True):
 
 
 # define the standalone generator model
-def define_generator(image_shape=(256, 256, 3)):
+def define_generator(image_shape=(1024, 1024, 1)):
     # weight initialization
     init = RandomNormal(stddev=0.02)
     # image input
@@ -116,7 +117,7 @@ def define_generator(image_shape=(256, 256, 3)):
     d6 = decoder_block(d5, e2, 128, dropout=False)
     d7 = decoder_block(d6, e1, 64, dropout=False)
     # output
-    g = Conv2DTranspose(3, (4, 4), strides=(2, 2), padding='same', kernel_initializer=init)(d7)
+    g = Conv2DTranspose(1, (4, 4), strides=(2, 2), padding='same', kernel_initializer=init)(d7)
     out_image = Activation('tanh')(g)
     # define model
     model = Model(in_image, out_image)
@@ -147,9 +148,13 @@ def load_real_samples(filename):
     data = load(filename)
     # unpack arrays
     X1, X2 = data['arr_0'], data['arr_1']
-    # scale from [0,255] to [-1,1]
-    X1 = (X1 - 127.5) / 127.5
-    X2 = (X2 - 127.5) / 127.5
+    # # scale from [0,255] to [-1,1]
+    # X1 = (X1 - 127.5) / 127.5
+    # X2 = (X2 - 127.5) / 127.5
+
+    # Reshape
+    X1 = np.reshape(X1, (X1.shape[0], X1.shape[1], X1.shape[2], 1))
+    X2 = np.reshape(X2, (X2.shape[0], X2.shape[1], X2.shape[2], 1))
     return [X1, X2]
 
 
@@ -240,10 +245,11 @@ def train(d_model, g_model, gan_model, dataset, n_epochs=100, n_batch=1):
 
 
 # load image data
-dataset = load_real_samples('maps_256.npz')
+dataset = load_real_samples('maps_1024.npz')
 print('Loaded', dataset[0].shape, dataset[1].shape)
 # define input shape based on the loaded dataset
 image_shape = dataset[0].shape[1:]
+
 # define the models
 d_model = define_discriminator(image_shape)
 g_model = define_generator(image_shape)
