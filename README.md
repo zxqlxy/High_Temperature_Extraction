@@ -8,6 +8,11 @@ The data is from [Standford JSOC Database](http://jsoc.stanford.edu/data/aia/syn
 The result of a Fe_XVIII signal full disk [solar picture](pics/20190309_Fe_XVIII.jpg) is obtained from [94 image](pics/20190309_0000_0094.jpg), [171 image](pics/20190309_0000_0171.jpg), [193_image](pics/20190309_0000_0193.jpg).
 
 ![solar picture](pics/20190309_Fe_XVIII.jpg)
+<img src="pics/20190309_Fe_XVIII.jpg" alt="solar picture" width="250"/>
+<img src="pics/20190309_0000_0094.jpg" alt="94 image" width="250"/>
+<img src="pics/20190309_0000_0171.jpg" alt="171 image" width="250"/>
+<img src="pics/20190309_0000_0193.jpg" alt="193 image" width="250"/>
+
 ![94 image](pics/20190309_0000_0094.jpg)
 ![171 image](pics/20190309_0000_0171.jpg)
 ![193_image](pics/20190309_0000_0193.jpg)
