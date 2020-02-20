@@ -6,12 +6,12 @@ The data is from [Standford JSOC Database](http://jsoc.stanford.edu/data/aia/syn
 
 ### Week 1
 The result of a Fe_XVIII signal full disk [solar picture](pics/20190309_Fe_XVIII.jpg) is obtained from [94 image](pics/20190309_0000_0094.jpg), [171 image](pics/20190309_0000_0171.jpg), [193_image](pics/20190309_0000_0193.jpg).
-
+<p align="center">
 <img src="pics/20190309_Fe_XVIII.jpg" alt="solar picture" width="450" align="middle"/>
 <img src="pics/20190309_0000_0094.jpg" alt="94 image" width="450" align="middle"/>
 <img src="pics/20190309_0000_0171.jpg" alt="171 image" width="450" align="middle"/>
 <img src="pics/20190309_0000_0193.jpg" alt="193 image" width="450" align="middle"/>
-
+</p>
 ### Week 2
 After some preprocessing, I did the first GAN on data on first 3 months of data and I found that the loss function never
 converge because it will pick noise around the sun like [this](pics/plot_000900.png). 
