@@ -2,7 +2,7 @@
 
 ## Preprocess the data to get Fe_XVIII signal
 The method is from [A Systematic Survey of High-Temperature Emission in Solar Active Regions](http://dx.doi.org/10.1088/0004-637X/759/2/141) to extract Fe_XVIII signal on 94 by subtracting "warm" signal from 171 and 193.
-The data is from [Standford JSOC Database](http://jsoc.stanford.edu/data/aia/synoptic/)
+The data is from [Standford JSOC Database](http://jsoc.stanford.edu/data/aia/synoptic/).
 
 ### Week 1
 The result of a Fe_XVIII signal full disk [solar picture](pics/20190309_Fe_XVIII.jpg) is obtained from [94 image](pics/20190309_0000_0094.jpg), [171 image](pics/20190309_0000_0171.jpg), [193_image](pics/20190309_0000_0193.jpg).
@@ -24,3 +24,11 @@ the sun. While the 193 looks good. Here are the pictures.
   <img src="pics/max_point_094.jpg" alt="094" width="420" style="float: right;"/>
   <img src="pics/max_point_193.jpg" alt="193" width="420" style="float: right;"/>
 </p>
+
+Thus, we need to mask out the data outside of the disk (including the outer part of the disk) to avoid too much noise.
+<p>
+  <img src="pics/20190309_0000_0094.jpg" alt="094" width="420" style="float: right;"/>
+  <img src="pics/20190309_0000_0094_mask.jpg" alt="193" width="420" style="float: right;"/>
+</p>
+Not only that, we need to preprocess the data to according to log scale and normalize the data (it turns out each 
+different picture can have different scale).

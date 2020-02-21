@@ -6,6 +6,8 @@ Finding and masking bright pixels
 
 How to find and overplot the location of the brightest
 pixel and then mask pixels around that region.
+
+This is just to confirm that we need more masking 
 """
 # sphinx_gallery_thumbnail_number = 2
 
