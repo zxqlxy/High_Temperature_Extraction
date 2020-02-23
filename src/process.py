@@ -1,3 +1,16 @@
+# -*- coding: utf-8 -*-
+"""
+=================================
+Process the EUV Data
+=================================
+
+The general workflow is generate ->
+downsample -> normalize -> mask_out
+-> Save
+"""
+
+
+
 import sunpy.io
 import sunpy.map
 import sunpy.data.sample
@@ -37,8 +50,8 @@ def process(*argv):
                 try:
                     lis = sunpy.io.fits.read(
                         base + "094/AIA" + yr + mo + da + "_0000_0094.fits")
-                    smap094 = sunpy.map.Map(
-                        base + "094/AIA" + yr + mo + da + "_0000_0094.fits")
+                    # smap094 = sunpy.map.Map(
+                    #     base + "094/AIA" + yr + mo + da + "_0000_0094.fits")
                     smap171 = sunpy.map.Map(
                         base + "171/AIA" + yr + mo + da + "_0000_0171.fits")
                     smap193 = sunpy.map.Map(
@@ -48,51 +61,37 @@ def process(*argv):
                     inside = (f * smap171.data) + ((1 - f) * smap193.data) / 116.54
                     smap = 0.39 * (a1 * inside ** 1 + a2 * inside ** 2 + a3 * inside ** 3 + a4 * inside ** 4)
                     data, header = lis[1]
-                    # print(lis)
-                    # print(smap094.data)
-                    print(np.amin(data))
-                    print(np.amax(data))
-                    print(np.amin(smap094.data))
-                    print(np.amax(smap193.data))
 
-                    # Mius the warm portion of the picture
-                    print(data)
-                    data = mask_out(data - smap)
-                    mymap = sunpy.map.Map(data, header)
-                    # smap094_ = [header, mask_out(data1)]
-                    # smap171.data = mask_out(smap171.data)
-                    # smap193.data = mask_out(smap193.data)
-                    smap094.peek(draw_limb=True)
-                    smap171.peek(draw_limb=True)
-                    smap193.peek(draw_limb=True)
-                    mymap.peek(draw_limb=True)
+                    # smap094_ = sunpy.map.Map(mask_out(smap094.data), header)
+                    # smap094_.peek(draw_limb=True)
+                    # smap171.peek(draw_limb=True)
+                    # smap193.peek(draw_limb=True)
+                    # mymap.peek(draw_limb=True)
 
-                    tar = mymap.data
+                    tar = data - smap
                     print(yr + mo + da)
-
 
                     if "256" in argv:
                         filename = 'maps_256.npz'
                         data = downsample_256(data)
                         tar = downsample_256(tar)
 
-                    # Add data
+                    if "normalize" in argv:
+                        data = normalize(data)
+                        tar = normalize(tar)
+
+                    if "mask" in argv:
+                        mask_out(data)
+                        mask_out(tar)
+
                     if "addData" in argv:
                         src_list.append(data)
                         tar_list.append(tar)
 
-                    im = mymap.plot()
                     if "show" in argv:
+                        mymap = sunpy.map.Map(tar, header)
+                        im = mymap.plot()
                         plt.show()
-                        # plt.clf()
-                        # smap094.plot()
-                        # plt.show()
-                        # plt.clf()
-                        # smap171.plot()
-                        # plt.show()
-                        # plt.clf()
-                        # smap193.plot()
-                        # plt.show()
                     if "saveFig" in argv:
                         plt.savefig(base + yr + mo + da + "_Fe_XVIII.jpg")
                 except FileNotFoundError:
@@ -124,23 +123,50 @@ def downsample_256(src, *argv):
     return res
 
 
+def normalize(src):
+    """
+
+    :param src:
+    :return:
+    """
+    # min_ = np.amin(src)
+    # src = np.log2(src - min_ + 2**(-1))
+
+    _max = np.amax(src)
+    _min = np.amin(src)
+
+    # Normalize the maximum and minimum to one
+    src = (src - ((_max + _min)/2)) / ((_max - _min)/2)
+    _max1 = np.amax(src)
+    _min1 = np.amin(src)
+
+    # Make sure that normalize is success
+    print(_max1, _min1)
+    assert(_max1 == 1.0 and abs(_min1 + 1) < 10**(-10))
+    return src
+
+
 def mask_out(src):
     """
     Mask the data  outside of the disk. 0.3846 is a number calculated based on the structure
-    of the pic.
+    of the pic. Due to -inf, this is normally done after normalize
     :param src: full disk data
     :return:    the masked src
     """
+    if abs(np.amin(src) + 1) < 10**(-10):
+        mini = -1.0
+    else:
+        mini = float("inf")
+
     num = len(src)  # can do this since the data is square
     for i in range(num):
         for j in range(num):
             if (i - num/2) ** 2 + (j - num/2) ** 2 > (0.3846 * num) **2:
-                src[i][j] = float("inf")
-    return src
+                src[i][j] = mini
+
+    assert(len(src) == 256 and len(src[0]) == 256)
 
 
-def nomalize(src):
-    pass
 
 
 def plot_day(yr: str, mo: str, da: str):
@@ -151,13 +177,13 @@ def plot_day(yr: str, mo: str, da: str):
     :param da:
     """
 
-    lis = sunpy.io.fits.read(
-        base + "094/AIA" + yr + mo + da + "_0000_0094.fits")
-    data, header = lis[1]
-    mymap = sunpy.map.Map(mask_out(data), header)
+    # lis = sunpy.io.fits.read(
+    #     base + "094/AIA" + yr + mo + da + "_0000_0094.fits")
+    # data, header = lis[1]
+    # mymap = sunpy.map.Map(mask_out(data), header)
     smap094 = sunpy.map.Map(
         base + "094/AIA" + yr + mo + da + "_0000_0094.fits")
-    im = mymap.plot()
+    im = smap094.plot()
     plt.savefig(base + yr + mo + da + "_0000_0094.jpg")
     smap171 = sunpy.map.Map(
         base + "171/AIA" + yr + mo + da + "_0000_0171.fits")
@@ -170,5 +196,4 @@ def plot_day(yr: str, mo: str, da: str):
 
 
 if __name__ == "__main__":
-    # process("show", "saveFig") # "addData", "256", "saveFile"
-    plot_day("2019", "03", "09")
+    process("256", "mask", "normalize","addData", "saveFile") # "addData", "256", "saveFile"
