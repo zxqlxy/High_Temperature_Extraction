@@ -40,3 +40,7 @@ Thus, we need to mask out the data outside of the disk (including the outer part
 </p>
 Not only that, we need to normalize the data (it turns out each different picture can have different scale) so that the 
 max and min are 1.0 and -1.0 respectively. 
+
+### week 3
+Now, the preprocess first mask out (set masked area to minimum of one picture) and then normalize. Also, after some observations, 
+the unwanted results (sun flare) occurs mostly when the maximum of the picture is less than 10^8.

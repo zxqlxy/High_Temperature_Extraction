@@ -9,17 +9,12 @@ downsample -> normalize -> mask_out
 -> Save
 """
 
-
-
 import sunpy.io
 import sunpy.map
 import sunpy.data.sample
 import matplotlib.pyplot as plt
 from numpy import asarray
 import numpy as np
-from numpy import vstack
-# from keras.preprocessing.image import img_to_array
-# from keras.preprocessing.image import load_img
 from numpy import savez_compressed
 
 base = "/Users/lxy/Desktop/Rice/PHYS 491 & 493 Research/data/"
@@ -35,6 +30,13 @@ a3 = -9.90 * 10 ** (-2)
 a4 = -2.84 * 10 ** (-3)
 f = 0.31
 
+ignore_list = ["20190101", "20190110", "20190112", "20190113", "20190114", "20190115", "20190116", "20190118",
+               "20190119", "20190120", "20190228", "20190307", "20190327", "20190328", "20190330", "20190331",
+               "20190422", "20190423", "20190424", "20190426", "20190427", "20190428", "20190429", "20190430",
+               "20190501", "20190502", "20190520", "20190521", "20190522", "20190523", "20190524", "20190529",
+               "20190615", "20190617", "20190618", "20190619", "20190620", "20190621", "20190622", "20190623",
+               "20190714", "20190716", "20190717", "20190718", "20190719", "20190721", "20190728", "20190729",
+               "20190730", "20190801", "20190802", "20190810", "20190811", "20190812", "20190813", "20191111"]
 
 def process(*argv):
     """
@@ -45,7 +47,7 @@ def process(*argv):
     src_list = []
     tar_list = []
     for yr in years:
-        for mo in months[:3]:
+        for mo in months:
             for da in days:
                 try:
                     lis = sunpy.io.fits.read(
@@ -71,18 +73,23 @@ def process(*argv):
                     tar = data - smap
                     print(yr + mo + da)
 
+                    if "removeFlare" in argv:
+                        if np.amax(tar) > 1e8:
+                            print("ignore : " + yr + mo + da)
+                            continue
+
                     if "256" in argv:
-                        filename = 'maps_256.npz'
+                        filename = 'maps_256_flare.npz'
                         data = downsample_256(data)
                         tar = downsample_256(tar)
-
-                    if "normalize" in argv:
-                        data = normalize(data)
-                        tar = normalize(tar)
 
                     if "mask" in argv:
                         mask_out(data)
                         mask_out(tar)
+
+                    if "normalize" in argv:
+                        data = normalize(data)
+                        tar = normalize(tar)
 
                     if "addData" in argv:
                         src_list.append(data)
@@ -90,8 +97,9 @@ def process(*argv):
 
                     if "show" in argv:
                         mymap = sunpy.map.Map(tar, header)
-                        im = mymap.plot()
-                        plt.show()
+                        mymap.peek(draw_limb=True)
+                        # im = mymap.plot()
+                        # plt.show()
                     if "saveFig" in argv:
                         plt.savefig(base + yr + mo + da + "_Fe_XVIII.jpg")
                 except FileNotFoundError:
@@ -125,7 +133,7 @@ def downsample_256(src, *argv):
 
 def normalize(src):
     """
-
+    Normalize the data set to [-1, 1]
     :param src:
     :return:
     """
@@ -153,10 +161,8 @@ def mask_out(src):
     :param src: full disk data
     :return:    the masked src
     """
-    if abs(np.amin(src) + 1) < 10**(-10):
-        mini = -1.0
-    else:
-        mini = float("inf")
+
+    mini = np.amin(src)
 
     num = len(src)  # can do this since the data is square
     for i in range(num):
@@ -196,4 +202,5 @@ def plot_day(yr: str, mo: str, da: str):
 
 
 if __name__ == "__main__":
-    process("256", "mask", "normalize","addData", "saveFile") # "addData", "256", "saveFile"
+    process("removeFlare", "256", "mask", "normalize", "addData",  "saveFile") # "addData", "256", "saveFile"
+# "256", "mask", "normalize", "addData",
