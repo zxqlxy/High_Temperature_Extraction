@@ -5,8 +5,10 @@ Process the EUV Data
 =================================
 
 The general workflow is generate ->
-downsample -> normalize -> mask_out
--> Save
+removeFlare -> downsample ->
+normalize-> mask_out -> add Data
+
+(Optional show or save fig)
 """
 
 import sunpy.io
@@ -30,6 +32,7 @@ a3 = -9.90 * 10 ** (-2)
 a4 = -2.84 * 10 ** (-3)
 f = 0.31
 
+# Instead of manually search, I find out a threshhold
 ignore_list = ["20190101", "20190110", "20190112", "20190113", "20190114", "20190115", "20190116", "20190118",
                "20190119", "20190120", "20190228", "20190307", "20190327", "20190328", "20190330", "20190331",
                "20190422", "20190423", "20190424", "20190426", "20190427", "20190428", "20190429", "20190430",
@@ -37,6 +40,7 @@ ignore_list = ["20190101", "20190110", "20190112", "20190113", "20190114", "2019
                "20190615", "20190617", "20190618", "20190619", "20190620", "20190621", "20190622", "20190623",
                "20190714", "20190716", "20190717", "20190718", "20190719", "20190721", "20190728", "20190729",
                "20190730", "20190801", "20190802", "20190810", "20190811", "20190812", "20190813", "20191111"]
+
 
 def process(*argv):
     """
@@ -98,8 +102,8 @@ def process(*argv):
                     if "show" in argv:
                         mymap = sunpy.map.Map(tar, header)
                         mymap.peek(draw_limb=True)
-                        # im = mymap.plot()
-                        # plt.show()
+                        im = mymap.plot()
+                        plt.show()
                     if "saveFig" in argv:
                         plt.savefig(base + yr + mo + da + "_Fe_XVIII.jpg")
                 except FileNotFoundError:
@@ -144,13 +148,13 @@ def normalize(src):
     _min = np.amin(src)
 
     # Normalize the maximum and minimum to one
-    src = (src - ((_max + _min)/2)) / ((_max - _min)/2)
+    src = (src - ((_max + _min) / 2)) / ((_max - _min) / 2)
     _max1 = np.amax(src)
     _min1 = np.amin(src)
 
     # Make sure that normalize is success
     print(_max1, _min1)
-    assert(_max1 == 1.0 and abs(_min1 + 1) < 10**(-10))
+    assert (_max1 == 1.0 and abs(_min1 + 1) < 10 ** (-10))
     return src
 
 
@@ -159,7 +163,6 @@ def mask_out(src):
     Mask the data  outside of the disk. 0.3846 is a number calculated based on the structure
     of the pic. Due to -inf, this is normally done after normalize
     :param src: full disk data
-    :return:    the masked src
     """
 
     mini = np.amin(src)
@@ -167,12 +170,10 @@ def mask_out(src):
     num = len(src)  # can do this since the data is square
     for i in range(num):
         for j in range(num):
-            if (i - num/2) ** 2 + (j - num/2) ** 2 > (0.3846 * num) **2:
+            if (i - num / 2) ** 2 + (j - num / 2) ** 2 > (0.3846 * num) ** 2:
                 src[i][j] = mini
 
-    assert(len(src) == 256 and len(src[0]) == 256)
-
-
+    assert (len(src) == 256 and len(src[0]) == 256)
 
 
 def plot_day(yr: str, mo: str, da: str):
@@ -183,24 +184,36 @@ def plot_day(yr: str, mo: str, da: str):
     :param da:
     """
 
-    # lis = sunpy.io.fits.read(
-    #     base + "094/AIA" + yr + mo + da + "_0000_0094.fits")
-    # data, header = lis[1]
-    # mymap = sunpy.map.Map(mask_out(data), header)
-    smap094 = sunpy.map.Map(
+    lis = sunpy.io.fits.read(
         base + "094/AIA" + yr + mo + da + "_0000_0094.fits")
-    im = smap094.plot()
-    plt.savefig(base + yr + mo + da + "_0000_0094.jpg")
+    data, header = lis[1]
+    print(header)
+    # smap094 = sunpy.map.Map(
+    #     base + "094/AIA" + yr + mo + da + "_0000_0094.fits")
+    # im = smap094.plot()
+    # plt.savefig(base + yr + mo + da + "_0000_0094.jpg")
     smap171 = sunpy.map.Map(
         base + "171/AIA" + yr + mo + da + "_0000_0171.fits")
     im = smap171.plot()
-    plt.savefig(base + yr + mo + da + "_0000_0171.jpg")
+    # plt.savefig(base + yr + mo + da + "_0000_0171.jpg")
     smap193 = sunpy.map.Map(
         base + "193/AIA" + yr + mo + da + "_0000_0193.fits")
     im = smap193.plot()
-    plt.savefig(base + yr + mo + da + "_0000_0193.jpg")
+    # plt.savefig(base + yr + mo + da + "_0000_0193.jpg")
+
+    # Plot the high energy emission
+    inside = (f * smap171.data) + ((1 - f) * smap193.data) / 116.54
+    smap = 0.39 * (a1 * inside ** 1 + a2 * inside ** 2 + a3 * inside ** 3 + a4 * inside ** 4)
+    tar = data - smap
+    mymap = sunpy.map.Map(tar, header)
+    fig, ax = plt.subplots()
+    mymap.plot()
+    ax.set_title('High Temperature Emission 2019-03-09')
+
+    # plt.show()
+    plt.savefig(base + yr + mo + da + "_Fe_XVIII.jpg")
 
 
 if __name__ == "__main__":
-    process("removeFlare", "256", "mask", "normalize", "addData",  "saveFile") # "addData", "256", "saveFile"
-# "256", "mask", "normalize", "addData",
+    # process("removeFlare", "256", "mask", "normalize", "addData", "")
+    plot_day("2019", "03", "09")

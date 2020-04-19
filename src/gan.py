@@ -244,16 +244,17 @@ def train(d_model, g_model, gan_model, dataset, n_epochs=100, n_batch=1):
             summarize_performance(i, g_model, dataset)
 
 
-# load image data
-dataset = load_real_samples('maps_1024.npz')
-print('Loaded', dataset[0].shape, dataset[1].shape)
-# define input shape based on the loaded dataset
-image_shape = dataset[0].shape[1:]
+if __name__ == "__main__":
+    # load image data
+    dataset = load_real_samples('maps_1024.npz')
+    print('Loaded', dataset[0].shape, dataset[1].shape)
+    # define input shape based on the loaded dataset
+    image_shape = dataset[0].shape[1:]
 
-# define the models
-d_model = define_discriminator(image_shape)
-g_model = define_generator(image_shape)
-# define the composite model
-gan_model = define_gan(g_model, d_model, image_shape)
-# train model
-train(d_model, g_model, gan_model, dataset)
+    # define the models
+    d_model = define_discriminator(image_shape)
+    g_model = define_generator(image_shape)
+    # define the composite model
+    gan_model = define_gan(g_model, d_model, image_shape)
+    # train model
+    train(d_model, g_model, gan_model, dataset)

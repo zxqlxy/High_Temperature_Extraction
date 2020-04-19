@@ -12,9 +12,9 @@ import requests
 # data = response.text
 years = ["2019"]
 months = [str(i+ 1) for i in range(12)]
-months = list(map(lambda i: '0'+ i if len(i) == 1 else i, months))
+months = list(map(lambda i: '0' + i if len(i) == 1 else i, months))
 days = [str(i + 1) for i in range(31)]
-days = list(map(lambda i: '0'+ i if len(i) == 1 else i, days))
+days = list(map(lambda i: '0' + i if len(i) == 1 else i, days))
 urlBase = "http://jsoc.stanford.edu/data/aia/synoptic"
 locPath = "/Users/lxy/Desktop/Rice/PHYS 491 & 493 Research/data"
 

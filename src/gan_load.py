@@ -58,12 +58,13 @@ def plot_images(src_img, gen_img, tar_img):
 
 if __name__ == "__main__":
     # load dataset
-    [X1, X2] = load_real_samples('maps_256_flare.npz')
+    [X1, X2] = load_real_samples('maps_256_data.npz')
     print('Loaded', X1.shape, X2.shape)
     # load model
     model = load_model('model_001700.h5')
     # select random example
     ix = randint(0, len(X1), 1)
+    print(ix)
     src_image, tar_image = X1[ix], X2[ix]
     # generate image from source
     gen_image = model.predict(src_image)
