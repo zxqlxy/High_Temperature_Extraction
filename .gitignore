@@ -1,4 +1,4 @@
 /.idea/
 /data/SDOAIA/
 /src/*.npz
-
+.DS_Store
